@@ -26,7 +26,7 @@ public abstract class AbstractMultiBindingsModule<T> extends AbstractModule {
     /**
      * Support class for contributing MultiBindings via a {@link PrivateModule}.
      * 
-     * @author mathieu
+     * @author mrlalonde
      * 
      */
     public abstract class PrivateMultiBindingsModule extends PrivateModule {
@@ -59,7 +59,7 @@ public abstract class AbstractMultiBindingsModule<T> extends AbstractModule {
 
 	/**
 	 * Starts the exposure of MultiBindings via an EDSL.
-	 * @return
+	 * @return 
 	 */
 	protected final MultiBindingExposer exposeMultiBinding() {
 	    return new MultiBindingExposer();
