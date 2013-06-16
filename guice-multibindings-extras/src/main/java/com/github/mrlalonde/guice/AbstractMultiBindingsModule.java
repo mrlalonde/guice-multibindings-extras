@@ -1,15 +1,13 @@
 package com.github.mrlalonde.guice;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.PrivateModule;
 import com.google.inject.multibindings.Multibinder;
-import com.google.inject.name.Names;
 
 /**
  * {@link AbstractModule} that wraps a PrivateModule to expose multiple
@@ -30,30 +28,31 @@ public abstract class AbstractMultiBindingsModule<T> extends AbstractModule {
      * 
      */
     public abstract class PrivateMultiBindingsModule extends PrivateModule {
-	private int counter = 0;
-	private final Map<Key<? extends T>, Class<? extends T>> multiBindings = new HashMap<Key<? extends T>, Class<? extends T>>();
+	private final Set<Key<? extends T>> multiBindingKeys = new HashSet<Key<? extends T>>();
 	private final Class<T> interfaceClass;
-
+	private final BindingKeyGenerator<T> bindingKeyGenerator;
+	
 	protected PrivateMultiBindingsModule(Class<T> interfaceClass) {
 	    super();
 	    this.interfaceClass = interfaceClass;
+	    bindingKeyGenerator = new BindingKeyGenerator<T>(this);
 	}
 
 	private <I extends T> void setUpMultiBindingFor(Class<I> implementationClass) {
-	    Key<I> key = getKey(implementationClass);
+	    Key<I> key = bindingKeyGenerator.generateKey(implementationClass);
 	    bind(key).to(implementationClass);
-	    expose(key);
-	    multiBindings.put(key, implementationClass);
+	    setUpMultiBindingFor(key);
 	}
-
-	private <I extends T> Key<I> getKey(Class<I> type) {
-	    return Key.get(type, Names.named(getClass().toString() + counter++));
+	
+	private <I extends T> void setUpMultiBindingFor(Key<I> key) {
+	    expose(key);
+	    multiBindingKeys.add(key);
 	}
 
 	protected final void registerMultiBindings(Binder binder) {
 	    Multibinder<T> multiBinder = Multibinder.newSetBinder(binder, interfaceClass);
-	    for (Entry<Key<? extends T>, Class<? extends T>> multiBinding : multiBindings.entrySet()) {
-		multiBinder.addBinding().to(multiBinding.getKey());
+	    for (Key<? extends T> bindingKey : multiBindingKeys) {
+		multiBinder.addBinding().to(bindingKey);
 	    }
 	}
 
@@ -91,7 +90,7 @@ public abstract class AbstractMultiBindingsModule<T> extends AbstractModule {
 
     /**
      * 
-     * @return Your own implmentation that will configure implementations that
+     * @return Your own implementation that will configure implementations that
      *         you want to contribute as multi-bindings
      */
     protected abstract PrivateMultiBindingsModule newPrivateMultiBindingsModule();
