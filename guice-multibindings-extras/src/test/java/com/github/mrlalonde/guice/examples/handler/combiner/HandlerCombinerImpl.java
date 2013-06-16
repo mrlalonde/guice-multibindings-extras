@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import com.github.mrlalonde.guice.examples.handler.Handler;
 
-public class HandlerCombinerImpl implements HandlerCombiner {
+class HandlerCombinerImpl implements HandlerCombiner {
     private final Set<Handler> handlers;
 
     @Inject

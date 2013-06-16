@@ -14,6 +14,7 @@ public final class OneModule extends AbstractMultiBindingsModule<Handler> {
 	    protected void configure() {
 		bind(Builder.class).to(BuilderOne.class);
 		exposeMultiBinding().to(OneHandler.class);
+		exposeMultiBinding().to(OneHandlerA.class);
 	    }
 	};
     }

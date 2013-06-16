@@ -11,7 +11,7 @@ import com.google.inject.multibindings.Multibinder;
 
 /**
  * {@link AbstractModule} that wraps a PrivateModule to expose multiple
- * implmentation via MultiBindings.
+ * implementation via MultiBindings.
  * 
  * @author mrlalonde
  * 
@@ -38,17 +38,6 @@ public abstract class AbstractMultiBindingsModule<T> extends AbstractModule {
 	    bindingKeyGenerator = new BindingKeyGenerator<T>(this);
 	}
 
-	private <I extends T> void setUpMultiBindingFor(Class<I> implementationClass) {
-	    Key<I> key = bindingKeyGenerator.generateKey(implementationClass);
-	    bind(key).to(implementationClass);
-	    setUpMultiBindingFor(key);
-	}
-	
-	private <I extends T> void setUpMultiBindingFor(Key<I> key) {
-	    expose(key);
-	    multiBindingKeys.add(key);
-	}
-
 	protected final void registerMultiBindings(Binder binder) {
 	    Multibinder<T> multiBinder = Multibinder.newSetBinder(binder, interfaceClass);
 	    for (Key<? extends T> bindingKey : multiBindingKeys) {
@@ -62,6 +51,17 @@ public abstract class AbstractMultiBindingsModule<T> extends AbstractModule {
 	 */
 	protected final MultiBindingExposer exposeMultiBinding() {
 	    return new MultiBindingExposer();
+	}
+
+	private <I extends T> void setUpMultiBindingFor(Class<I> implementationClass) {
+	    Key<I> key = bindingKeyGenerator.generateKey(implementationClass);
+	    bind(key).to(implementationClass);
+	    setUpMultiBindingFor(key);
+	}
+
+	private <I extends T> void setUpMultiBindingFor(Key<I> key) {
+	    expose(key);
+	    multiBindingKeys.add(key);
 	}
 
 	/**

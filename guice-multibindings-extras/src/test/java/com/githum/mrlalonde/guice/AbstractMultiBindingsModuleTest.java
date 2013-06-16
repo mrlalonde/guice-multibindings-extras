@@ -19,7 +19,7 @@ public class AbstractMultiBindingsModuleTest {
 	HandlerCombiner combiner = injector.getInstance(HandlerCombiner.class);
 	
 	assertNotNull(combiner);
-	assertEquals(2, combiner.getHandlers().size());
+	assertEquals(3, combiner.getHandlers().size());
     }
 
 }
